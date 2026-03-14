@@ -3,33 +3,41 @@ import '../modelos/nota.dart';
 import '../db/notas_database.dart';
 
 class NotesViewModel extends ChangeNotifier {
-  List<Note> _notes = [];
-
-  List<Note> get notes => _notes;
+  List<Note> notes = [];
 
   Future<void> loadNotes() async {
-    _notes = await NotesDatabase.instance.readAllNotes();
+    notes = await NotesDatabase.instance.readAllNotes();
+
+    notes.sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
+
     notifyListeners();
   }
 
   Future<void> addNote(Note note) async {
-    final newNote = await NotesDatabase.instance.create(note);
-    _notes.insert(0, newNote); // agrega al inicio
-    notifyListeners();
+    await NotesDatabase.instance.insert(note);
+    await loadNotes();
   }
 
   Future<void> updateNote(Note note) async {
     await NotesDatabase.instance.update(note);
-    final index = _notes.indexWhere((n) => n.id == note.id);
-    if (index != -1) {
-      _notes[index] = note;
-      notifyListeners();
-    }
+    await loadNotes();
   }
 
   Future<void> deleteNote(int id) async {
     await NotesDatabase.instance.delete(id);
-    _notes.removeWhere((n) => n.id == id);
-    notifyListeners();
+    await loadNotes();
+  }
+
+  Future<void> togglePin(Note note) async {
+    final updatedNote = note.copyWith(
+      isPinned: !note.isPinned,
+      updatedAt: DateTime.now(),
+    );
+    await NotesDatabase.instance.update(updatedNote);
+    await loadNotes();
   }
 }

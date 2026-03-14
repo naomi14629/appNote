@@ -15,6 +15,24 @@ class Note {
     this.isPinned = false,
   });
 
+  Note copyWith({
+    int? id,
+    String? title,
+    String? content,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isPinned,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isPinned: isPinned ?? this.isPinned,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -34,24 +52,6 @@ class Note {
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       isPinned: map['isPinned'] == 1,
-    );
-  }
-
-  Note copyWith({
-    int? id,
-    String? title,
-    String? content,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    bool? isPinned,
-  }) {
-    return Note(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      content: content ?? this.content,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      isPinned: isPinned ?? this.isPinned,
     );
   }
 }

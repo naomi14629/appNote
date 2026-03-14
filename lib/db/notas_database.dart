@@ -23,32 +23,31 @@ class NotesDatabase {
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      content TEXT NOT NULL,
-      createdAt TEXT NOT NULL,
-      updatedAt TEXT NOT NULL,
-      isPinned INTEGER NOT NULL
-    )
+      CREATE TABLE notes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        isPinned INTEGER NOT NULL DEFAULT 0
+      )
     ''');
-  }
-
-  Future<Note> create(Note note) async {
-    final db = await instance.database;
-    final id = await db.insert('notes', note.toMap());
-    return note.copyWith(id: id);
   }
 
   Future<List<Note>> readAllNotes() async {
     final db = await instance.database;
-    final result = await db.query('notes', orderBy: 'updatedAt DESC');
+    final result = await db.query('notes');
     return result.map((map) => Note.fromMap(map)).toList();
+  }
+
+  Future<int> insert(Note note) async {
+    final db = await instance.database;
+    return await db.insert('notes', note.toMap());
   }
 
   Future<int> update(Note note) async {
     final db = await instance.database;
-    return db.update(
+    return await db.update(
       'notes',
       note.toMap(),
       where: 'id = ?',
@@ -58,11 +57,6 @@ class NotesDatabase {
 
   Future<int> delete(int id) async {
     final db = await instance.database;
-    return db.delete('notes', where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future close() async {
-    final db = await instance.database;
-    db.close();
+    return await db.delete('notes', where: 'id = ?', whereArgs: [id]);
   }
 }
