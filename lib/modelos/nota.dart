@@ -15,7 +15,6 @@ class Note {
     this.isPinned = false,
   });
 
-  // Convertir Note a Map (para SQLite)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -27,7 +26,6 @@ class Note {
     };
   }
 
-  // Crear Note desde Map (cuando leemos de SQLite)
   factory Note.fromMap(Map<String, dynamic> map) {
     return Note(
       id: map['id'],
@@ -36,6 +34,24 @@ class Note {
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       isPinned: map['isPinned'] == 1,
+    );
+  }
+
+  Note copyWith({
+    int? id,
+    String? title,
+    String? content,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isPinned,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isPinned: isPinned ?? this.isPinned,
     );
   }
 }
