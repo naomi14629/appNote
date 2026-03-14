@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../vistamodelos/notes_viewmodel.dart';
 import '../modelos/nota.dart';
+import 'nota_detalle.dart';
 
 class NotesListScreen extends StatelessWidget {
+  // 👈 nombre exacto
   const NotesListScreen({super.key});
 
   @override
@@ -26,20 +28,22 @@ class NotesListScreen extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () {
-                    // Aquí luego abriremos la pantalla de detalle
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => NoteDetailScreen(note: note),
+                      ),
+                    );
                   },
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final nuevaNota = Note(
-            title: 'Nueva nota',
-            content: 'Contenido vacío',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const NoteDetailScreen()),
           );
-          viewModel.addNote(nuevaNota);
         },
         child: const Icon(Icons.add),
       ),
